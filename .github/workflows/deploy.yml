@@ -22,9 +22,12 @@ jobs:
   deploy-aws:
     runs-on: ubuntu-latest
     name: Deploy AWS
-    strategy:
-      matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+    # strategy:
+    #   matrix:
+    #     python-version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
       - uses: actions/checkout@v2
-      - run: echo "Set up Python ${{ matrix.python-version }}""
+      - run: echo "Set up Python ${{ matrix.python-version }}"
+      - run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - run: unzip awscliv2.zip
+      - run: sudo ./aws/install
