@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - master
+
 jobs:
   
-  deploy-heroku:
+  deploy-heroku-master:
     name: Deploy Heroku
     runs-on: ubuntu-latest
     steps:
@@ -19,11 +20,29 @@ jobs:
           remote_branch: "master"
           usedocker: true
 
-  deploy-aws:
-    name: Deploy AWS
+  deploy-heroku-staging:
+    name: Deploy Heroku
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: sudo apt-get update
-      - run: sudo apt-get install awscli
-      - run: aws --version
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "damn-vulnerable-app-elian" #Must be unique in Heroku
+          heroku_email: "elianbarci@hotmail.com"
+          remote_branch: "master"
+          usedocker: true
+
+  zap_scan:
+    uses: zaproxy/action-full-scan@v0.4.0
+    with:
+      target: 'https://www.zaproxy.org/'
+
+  # deploy-aws:
+  #   name: Deploy AWS
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - run: sudo apt-get update
+  #     - run: sudo apt-get install awscli
+  #     - run: aws --version
