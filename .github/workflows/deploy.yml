@@ -4,6 +4,9 @@ on:
     branches:
       - master
 jobs:
+
+
+
   deploy-heroku:
     name: Deploy Heroku
     runs-on: ubuntu-latest
@@ -28,6 +31,6 @@ jobs:
         uses: zaproxy/action-baseline@v0.7.0
         with:
           token: ${{ secrets.TOKEN_GITHUB }}
-          target: 'https://www.zaproxy.org/'
+          target: '${{MASTER_URL}}'
           rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
