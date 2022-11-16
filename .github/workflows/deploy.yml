@@ -5,15 +5,14 @@ on:
       - master
 jobs:
 
-  dependabot:
-    runs-on: ubuntu-latest
-    if: dependabot[bot]
-    steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v1.1.1
-        with:
-          github-token: ${{ secrets.TOKEN_GITHUB }}
+  # dependabot:
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - name: Dependabot metadata
+    #     id: metadata
+    #     uses: dependabot/fetch-metadata@v1.1.1
+    #     with:
+    #       github-token: ${{ secrets.TOKEN_GITHUB }}
 
   sonarQubeTrigger:
     name: SonarQube Trigger
@@ -27,7 +26,7 @@ jobs:
         login: ${{ secrets.SONARQUBE_TOKEN }}
 
 
-  security:
+  snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
