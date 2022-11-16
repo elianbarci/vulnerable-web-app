@@ -13,7 +13,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v1.1.1
         with:
-          github-token: "${{ secrets.TOKEN_GITHUB }}"
+          github-token: ${{ secrets.TOKEN_GITHUB }}
 
   sonarQubeTrigger:
     name: SonarQube Trigger
