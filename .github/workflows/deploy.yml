@@ -4,6 +4,18 @@ on:
     branches:
       - master
 jobs:
+
+  sonarQubeTrigger:
+    name: SonarQube Trigger
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: SonarQube Scan
+      uses: kitabisa/sonarqube-action@master
+      with:
+        host: ${{ secrets.SONARQUBE_HOST }}
+        login: ${{ secrets.SONARQUBE_TOKEN }}
+
   deploy-heroku:
     name: Deploy Heroku
     runs-on: ubuntu-latest
@@ -16,6 +28,7 @@ jobs:
           heroku_email: "elianbarci@hotmail.com"
           remote_branch: "master"
           usedocker: true
+          
   zap_scan:
     runs-on: ubuntu-latest
     name: Scan ZAP website
