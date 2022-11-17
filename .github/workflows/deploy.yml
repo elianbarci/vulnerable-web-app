@@ -80,7 +80,7 @@ jobs:
         sarif_file: results.sarif
 
   zap-scan-faraday:
-    needs: [build]
+    needs: [deploy-heroku]
     runs-on: ubuntu-latest
     container:
       image: owasp/zap2docker-stable
