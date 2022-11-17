@@ -89,8 +89,8 @@ jobs:
     - name: Use Python
       uses: actions/setup-python@v2
       with:
-        python-version: ‘3.x’
-        architecture: ‘x64’
+        python-version: '3.x'
+        architecture: 'x64'
 
     - name: Install dependencies
       run: |
