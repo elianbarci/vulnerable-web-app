@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master
+
+
 jobs:
 
   # dependabot:
@@ -79,15 +81,44 @@ jobs:
       with:
         sarif_file: results.sarif
 
+
+  build-faraday:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ‘3.x’
+        architecture: ‘x64’
+
+    - name: Install dependencies
+      run: |
+        python -m install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Bandit (Python code analyzer)
+      run: bandit -r . -f xml -o flaskapp_faraday_bandit.xml | true
+    - name: Upload Bandit Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: bandit-report
+        path: flaskapp_faraday_bandit.xml
+    - name: Add Remote Origin
+        Integrating Faraday in the software development process Part One 7
+      run: |
+        git remote add heroku https: /heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+        - name: Deploy to Heroku
+        run: git push heroku HEAD:master -f
+
   zap-scan-faraday:
-    needs: [deploy-heroku]
+    needs: [build-faraday]
     runs-on: ubuntu-latest
     container:
-      image: owasp/zap2docker-stable:s2022-11-07
-      # options: --user root -v ${{ github.workspace }}:/zap/wrk/:rw
+      image: owasp/zap2docker-stable
+      options: --user root -v ${{github.workspace}}:/zap/wrk/:rw
     steps:
       - name: Run Zap Baseline Scan
-        run: zap-baseline.py ${{ secrets.MASTER_URL }} -x zap-report.xml | echo 0
+        run: zap-baseline.py ${{secrets.MASTER_URL}} -x zap-report.xml | echo 0
       - name: Upload Zap Report Artifact
         uses: actions/upload-artifact@v2
         with:
