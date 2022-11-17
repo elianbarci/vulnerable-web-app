@@ -93,7 +93,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        py -m install --upgrade pip
+        python install --upgrade pip
         pip install -r requirements.txt
     - name: Run Bandit (Python code analyzer)
       run: bandit -r . -f xml -o flaskapp_faraday_bandit.xml | true
