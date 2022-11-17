@@ -85,7 +85,6 @@ jobs:
   build-faraday:
     runs-on: ubuntu-latest
     steps:
-    - name: Use Python
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
