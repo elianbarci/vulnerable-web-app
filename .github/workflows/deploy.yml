@@ -83,7 +83,7 @@ jobs:
     needs: [deploy-heroku]
     runs-on: ubuntu-latest
     container:
-      image: owasp/zap2docker-stable
+      image: owasp/zap2docker-stable:s2022-11-07
       options: --user root -v ${{ github.workspace }}:/zap/wrk/:rw
     steps:
       - name: Run Zap Baseline Scan
