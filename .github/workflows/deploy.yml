@@ -89,7 +89,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip -m install --upgrade pip
+        pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Run Bandit (Python code analyzer)
