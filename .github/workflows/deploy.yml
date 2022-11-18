@@ -120,6 +120,7 @@ jobs:
 
   zap_scan:
     runs-on: ubuntu-latest
+    needs: [deploy-heroku-staging]
     name: Scan ZAP website
     steps:
       - name: Checkout
