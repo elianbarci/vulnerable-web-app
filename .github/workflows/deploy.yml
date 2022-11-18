@@ -20,7 +20,7 @@ jobs:
           host: ${{ secrets.SONARQUBE_HOST }}
           login: ${{ secrets.SONARQUBE_TOKEN }}
 
-  checking-credentials:
+  gitleaks-credentials:
     name: gitleaks
     runs-on: ubuntu-latest
     steps:
@@ -52,6 +52,7 @@ jobs:
 
   deploy-heroku-staging:
     name: Deploy Heroku Staging
+    needs: [njsscan, gitleaks-credentials,sonarQubeTrigger]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
