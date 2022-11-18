@@ -114,7 +114,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: zap-report
-          path: zap-report/zap_report.xml
+          path: zap_report.xml
 
       - name: Upload Reports to Faraday
           As you can see, we’ve used a dockerized version of OWASP Zap. For this reason, we
