@@ -75,7 +75,7 @@ jobs:
         sarif_file: results.sarif
 
 
-  build:
+  build-faraday:
     runs-on: ubuntu-latest
     steps:
 
