@@ -5,17 +5,7 @@ on:
     branches:
       - master
 
-
 jobs:
-
-  # dependabot:
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: Dependabot metadata
-    #     id: metadata
-    #     uses: dependabot/fetch-metadata@v1.1.1
-    #     with:
-    #       github-token: ${{ secrets.TOKEN_GITHUB }}
 
   sonarQubeTrigger:
     name: SonarQube Trigger
@@ -27,15 +17,6 @@ jobs:
       with:
         host: ${{ secrets.SONARQUBE_HOST }}
         login: ${{ secrets.SONARQUBE_TOKEN }}
-
-  snyk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   deploy-heroku:
     name: Deploy Heroku
@@ -94,18 +75,23 @@ jobs:
         sarif_file: results.sarif
 
 
-  build-faraday:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
 
+    - uses: actions/checkout@v1
+
+    - name: Use Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
 
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
+        python -m install --upgrade pip
+        pip install -r requirements.txt
+
     - name: Run Bandit (Python code analyzer)
       run: bandit -r . -f xml -o flaskapp_faraday_bandit.xml | true
     - name: Upload Bandit Report
@@ -113,6 +99,12 @@ jobs:
       with:
         name: bandit-report
         path: flaskapp_faraday_bandit.xml
+    - name: Add Remote Origin
+        Integrating Faraday in the software development process Part One 7
+      run: |
+        git remote add heroku https: /heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+    - name: Deploy to Heroku
+      run: git push heroku HEAD:master -f
 
   zap-scan-faraday:
     needs: [build-faraday]
