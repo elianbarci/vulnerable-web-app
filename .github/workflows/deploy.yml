@@ -47,6 +47,24 @@ jobs:
         with:
           sarif_file: results.sarif
 
+  shisho-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout HEAD
+        uses: actions/checkout@v1
+      - name: Run Shisho
+        uses: flatt-security/shisho-action@main
+        with:
+          ruleset-path: "./rules"
+          target-path: "./"
+          output-format: "sarif"
+          output-path: "shisho.sarif"
+          succeed-always: true
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ./shisho.sarif
+
 #DEPLOY STATGING
 
 
@@ -106,7 +124,7 @@ jobs:
           pip install faraday-cli
           faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{
           secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
-          faraday-cli --create-workspace ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
+          --create-workspace ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
           faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
           date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
 
