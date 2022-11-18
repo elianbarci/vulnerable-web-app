@@ -9,68 +9,68 @@ jobs:
 
 #SAST
 
-  sonarQubeTrigger:
-    name: SonarQube Trigger
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: SonarQube Scan
-        uses: kitabisa/sonarqube-action@master
-        with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: ${{ secrets.SONARQUBE_TOKEN }}
+  # sonarQubeTrigger:
+  #   name: SonarQube Trigger
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: SonarQube Scan
+  #       uses: kitabisa/sonarqube-action@master
+  #       with:
+  #         host: ${{ secrets.SONARQUBE_HOST }}
+  #         login: ${{ secrets.SONARQUBE_TOKEN }}
 
-  gitleaks-credentials:
-    name: gitleaks
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+  # gitleaks-credentials:
+  #   name: gitleaks
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: gitleaks/gitleaks-action@v2
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
-  njsscan:
-    runs-on: ubuntu-latest
-    name: njsscan code scanning
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-      - name: nodejsscan scan
-        id: njsscan
-        uses: ajinabraham/njsscan-action@master
-        with:
-          args: ". --sarif --output results.sarif || true"
-      - name: Upload njsscan report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results.sarif
+  # njsscan:
+  #   runs-on: ubuntu-latest
+  #   name: njsscan code scanning
+  #   steps:
+  #     - name: Checkout the code
+  #       uses: actions/checkout@v2
+  #     - name: nodejsscan scan
+  #       id: njsscan
+  #       uses: ajinabraham/njsscan-action@master
+  #       with:
+  #         args: ". --sarif --output results.sarif || true"
+  #     - name: Upload njsscan report
+  #       uses: github/codeql-action/upload-sarif@v1
+  #       with:
+  #         sarif_file: results.sarif
 
-  shisho-analyze:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout HEAD
-        uses: actions/checkout@v1
-      - name: Run Shisho
-        uses: flatt-security/shisho-action@main
-        with:
-          ruleset-path: "./rules"
-          target-path: "./"
-          output-format: "sarif"
-          output-path: "shisho.sarif"
-          succeed-always: true
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ./shisho.sarif
+  # shisho-analyze:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout HEAD
+  #       uses: actions/checkout@v1
+  #     - name: Run Shisho
+  #       uses: flatt-security/shisho-action@main
+  #       with:
+  #         ruleset-path: "./rules"
+  #         target-path: "./"
+  #         output-format: "sarif"
+  #         output-path: "shisho.sarif"
+  #         succeed-always: true
+  #     - name: Upload SARIF file
+  #       uses: github/codeql-action/upload-sarif@v1
+  #       with:
+  #         sarif_file: ./shisho.sarif
 
 #DEPLOY STATGING
 
 
   deploy-heroku-staging:
     name: Deploy Heroku Staging
-    needs: [njsscan, gitleaks-credentials,sonarQubeTrigger]
+    # needs: [njsscan, gitleaks-credentials,sonarQubeTrigger]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -122,11 +122,9 @@ jobs:
           Integrating Faraday in the software development process Part One 9
         run: |
           pip install faraday-cli
-          faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{
-          secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
-          --create-workspace ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-          faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
-          date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
+          faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
+          faraday-cli create_ws ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
+          faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
 
   zap_scan:
     runs-on: ubuntu-latest
@@ -147,16 +145,16 @@ jobs:
 
 #DEPLOY PROD
 
-  deploy-heroku-prod:
-    name: Deploy Heroku Prod
-    needs: [upload, zap_scan]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "damn-vulnerable-app-elian" #Must be unique in Heroku
-          heroku_email: "elianbarci@hotmail.com"
-          remote_branch: "master"
-          usedocker: true
+  # deploy-heroku-prod:
+  #   name: Deploy Heroku Prod
+  #   needs: [upload, zap_scan]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+  #       with:
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #         heroku_app_name: "damn-vulnerable-app-elian" #Must be unique in Heroku
+  #         heroku_email: "elianbarci@hotmail.com"
+  #         remote_branch: "master"
+  #         usedocker: true
