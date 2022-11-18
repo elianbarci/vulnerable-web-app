@@ -98,12 +98,6 @@ jobs:
       with:
         name: bandit-report
         path: flaskapp_faraday_bandit.xml
-    - name: Add Remote Origin
-        Integrating Faraday in the software development process Part One 7
-      run: |
-        git remote add heroku https: /heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-    - name: Deploy to Heroku
-      run: git push heroku HEAD:master -f
 
   zap-scan-faraday:
     needs: [build-faraday]
