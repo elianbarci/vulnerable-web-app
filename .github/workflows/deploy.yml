@@ -1,4 +1,4 @@
-name: Deploy Vulnerable Application                                  # workflow name
+name: Deploy Vulnerable Application # workflow name
 
 on:
   push:
@@ -7,46 +7,7 @@ on:
 
 jobs:
 
-  sonarQubeTrigger:
-    name: SonarQube Trigger
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@master
-      with:
-        host: ${{ secrets.SONARQUBE_HOST }}
-        login: ${{ secrets.SONARQUBE_TOKEN }}
-
-  deploy-heroku:
-    name: Deploy Heroku
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "damn-vulnerable-app-elian" #Must be unique in Heroku
-          heroku_email: "elianbarci@hotmail.com"
-          remote_branch: "master"
-          usedocker: true
-          
-  zap_scan:
-    runs-on: ubuntu-latest
-    name: Scan ZAP website
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: master
-      - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.7.0
-        with:
-          token: ${{ secrets.TOKEN_GITHUB }}
-          target: ${{secrets.MASTER_URL}}
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
-
+#SAST
   checking-credentials:
     name: gitleaks
     runs-on: ubuntu-latest
@@ -62,19 +23,17 @@ jobs:
     runs-on: ubuntu-latest
     name: njsscan code scanning
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v2
-    - name: nodejsscan scan
-      id: njsscan
-      uses: ajinabraham/njsscan-action@master
-      with:
-        args: '. --sarif --output results.sarif || true'
-    - name: Upload njsscan report
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: results.sarif
-
-
+      - name: Checkout the code
+        uses: actions/checkout@v2
+      - name: nodejsscan scan
+        id: njsscan
+        uses: ajinabraham/njsscan-action@master
+        with:
+          args: ". --sarif --output results.sarif || true"
+      - name: Upload njsscan report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
 
   zap-scan-faraday:
     needs: [deploy-heroku]
@@ -83,8 +42,6 @@ jobs:
       image: owasp/zap2docker-stable
       options: --user root -v ${{github.workspace}}:/zap/wrk/:rw
     steps:
-      - name: Where I am
-        run: ls
       - name: Run Zap Baseline Scan
         run: python zap-baseline.py ${{secrets.MASTER_URL}} -x zap-report.xml | echo 0
       - name: Upload Zap Report Artifact
@@ -113,11 +70,11 @@ jobs:
         with:
           name: bandit-report
           path: bandit-report
-      
+
       - name: Upload Reports to Faraday
-                As you can see, we’ve used a dockerized version of OWASP Zap. For this reason, we
-                need to choose the docker image and declare some options.
-                Integrating Faraday in the software development process Part One 9
+          As you can see, we’ve used a dockerized version of OWASP Zap. For this reason, we
+          need to choose the docker image and declare some options.
+          Integrating Faraday in the software development process Part One 9
         run: |
           pip install faraday-cli
           faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{
@@ -129,3 +86,60 @@ jobs:
           reports/bandit-report/flaskapp_faraday_bandit.xml
           faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
           date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
+
+#DEPLOY STATGING
+
+  deploy-heroku-staging:
+    name: Deploy Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "damn-vulnerable-app-staging" #Must be unique in Heroku
+          heroku_email: "elianbarci@hotmail.com"
+          remote_branch: "master"
+          usedocker: true
+#DAST
+  sonarQubeTrigger:
+    name: SonarQube Trigger
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: SonarQube Scan
+        uses: kitabisa/sonarqube-action@master
+        with:
+          host: ${{ secrets.SONARQUBE_HOST }}
+          login: ${{ secrets.SONARQUBE_TOKEN }}
+
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Scan ZAP website
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          token: ${{ secrets.TOKEN_GITHUB }}
+          target: ${{secrets.MASTER_URL}}
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
+
+#DEPLOY PROD
+
+  deploy-heroku-prod:
+    name: Deploy Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "damn-vulnerable-app-elian" #Must be unique in Heroku
+          heroku_email: "elianbarci@hotmail.com"
+          remote_branch: "master"
+          usedocker: true
