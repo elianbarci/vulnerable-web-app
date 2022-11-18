@@ -104,11 +104,11 @@ jobs:
           Integrating Faraday in the software development process Part One 9
         run: |
           pip install faraday-cli
-          python faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{
+          faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{
           secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
-          python faraday-cli create_ws ${{ github.event.repository.name }}-
+          faraday-cli create_ws ${{ github.event.repository.name }}-
           ${{ steps.date.outputs.date }}-${{ github.run_number }}
-          python faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
+          faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
           date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
 
   zap_scan:
