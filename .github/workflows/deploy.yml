@@ -8,6 +8,18 @@ on:
 jobs:
 
 #SAST
+
+  sonarQubeTrigger:
+    name: SonarQube Trigger
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: SonarQube Scan
+        uses: kitabisa/sonarqube-action@master
+        with:
+          host: ${{ secrets.SONARQUBE_HOST }}
+          login: ${{ secrets.SONARQUBE_TOKEN }}
+
   checking-credentials:
     name: gitleaks
     runs-on: ubuntu-latest
@@ -35,8 +47,27 @@ jobs:
         with:
           sarif_file: results.sarif
 
+#DEPLOY STATGING
+
+
+  deploy-heroku-staging:
+    name: Deploy Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "damn-vulnerable-app-staging" #Must be unique in Heroku
+          heroku_email: "elianbarci@hotmail.com"
+          remote_branch: "master"
+          usedocker: true
+
+#DAST
+
+
   zap-scan-faraday:
-    needs: [deploy-heroku]
+    needs: [deploy-heroku-staging]
     runs-on: ubuntu-latest
     container:
       image: owasp/zap2docker-stable
@@ -86,32 +117,6 @@ jobs:
           reports/bandit-report/flaskapp_faraday_bandit.xml
           faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
           date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
-
-#DEPLOY STATGING
-
-  deploy-heroku-staging:
-    name: Deploy Heroku
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "damn-vulnerable-app-staging" #Must be unique in Heroku
-          heroku_email: "elianbarci@hotmail.com"
-          remote_branch: "master"
-          usedocker: true
-#DAST
-  sonarQubeTrigger:
-    name: SonarQube Trigger
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: SonarQube Scan
-        uses: kitabisa/sonarqube-action@master
-        with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: ${{ secrets.SONARQUBE_TOKEN }}
 
   zap_scan:
     runs-on: ubuntu-latest
