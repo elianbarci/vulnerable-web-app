@@ -125,6 +125,7 @@ jobs:
           faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
           faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
           faraday-cli tool report ./zap_report.xml
+          faraday-cli status
           ls
   # zap_scan:
   #   runs-on: ubuntu-latest
