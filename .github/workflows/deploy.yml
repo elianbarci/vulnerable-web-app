@@ -68,25 +68,25 @@ jobs:
 #DEPLOY STATGING
 
 
-  deploy-heroku-staging:
-    name: Deploy Heroku Staging
-    # needs: [njsscan, gitleaks-credentials,sonarQubeTrigger]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "damn-vulnerable-app-staging" #Must be unique in Heroku
-          heroku_email: "elianbarci@hotmail.com"
-          remote_branch: "master"
-          usedocker: true
+  # deploy-heroku-staging:
+  #   name: Deploy Heroku Staging
+  #   # needs: [njsscan, gitleaks-credentials,sonarQubeTrigger]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+  #       with:
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #         heroku_app_name: "damn-vulnerable-app-staging" #Must be unique in Heroku
+  #         heroku_email: "elianbarci@hotmail.com"
+  #         remote_branch: "master"
+  #         usedocker: true
 
 #DAST
 
 
   zap-scan-faraday:
-    needs: [deploy-heroku-staging]
+    # needs: [deploy-heroku-staging]
     runs-on: ubuntu-latest
     container:
       image: owasp/zap2docker-stable
@@ -124,7 +124,7 @@ jobs:
           pip install faraday-cli
           faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
           faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-          faraday-cli tool report /zap-report/zap_report.xml
+          faraday-cli tool report ./zap-report/zap_report.xml
 
   zap_scan:
     runs-on: ubuntu-latest
