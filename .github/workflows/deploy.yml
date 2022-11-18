@@ -98,7 +98,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: zap-report
-          path: zap-report
+          path: zap-report.xml
 
   upload:
     needs: [zap-scan-faraday]
