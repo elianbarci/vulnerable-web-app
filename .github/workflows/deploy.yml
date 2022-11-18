@@ -51,7 +51,7 @@ jobs:
 
 
   deploy-heroku-staging:
-    name: Deploy Heroku
+    name: Deploy Heroku Staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -137,7 +137,7 @@ jobs:
 #DEPLOY PROD
 
   deploy-heroku-prod:
-    name: Deploy Heroku
+    name: Deploy Heroku Prod
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
