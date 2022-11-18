@@ -97,11 +97,6 @@ jobs:
         with:
           name: zap-report
           path: zap-report
-      - name: Download Bandit Report Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: bandit-report
-          path: bandit-report
 
       - name: Upload Reports to Faraday
           As you can see, we’ve used a dockerized version of OWASP Zap. For this reason, we
@@ -113,9 +108,6 @@ jobs:
           secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
           faraday-cli create_ws ${{ github.event.repository.name }}-
           ${{ steps.date.outputs.date }}-${{ github.run_number }}
-          faraday-cli process_report -w ${{ github.event.repository.
-          name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} /
-          reports/bandit-report/flaskapp_faraday_bandit.xml
           faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.
           date.outputs.date }}-${{ github.run_number }} /reports/zap-report/zap_report.xml
 
