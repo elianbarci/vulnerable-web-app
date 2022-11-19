@@ -48,7 +48,7 @@ jobs:
           sarif_file: results.sarif
 
   anchore-scan:
-  
+
     runs-on: ubuntu-latest
     
     - name: Set up Docker Buildx
