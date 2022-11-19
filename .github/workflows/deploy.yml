@@ -56,9 +56,9 @@ jobs:
         run: docker build . --file Dockerfile --tag localbuild/testimage:latest
       - uses: anchore/scan-action@v3
         id: scan
-        severity-cutoff: low
         with:
           image: "localbuild/testimage:latest"
+          severity-cutoff: low
       - name: upload Anchore scan SARIF report
         uses: github/codeql-action/upload-sarif@v2
         with:
