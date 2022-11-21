@@ -121,11 +121,12 @@ jobs:
           faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
           faraday-cli status
           faraday-cli tool report ./zap_report.xml
-          ls
-          vi ./zap_report.xml
 
   zap_scan:
     runs-on: ubuntu-latest
+    container:
+      image: python:3.9.1
+      options: --user root -v ${{ github.workspace }}:/reports:rw
     needs: [deploy-heroku-staging]
     name: Scan ZAP website
     steps:
