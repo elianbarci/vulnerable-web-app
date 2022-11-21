@@ -95,7 +95,7 @@ jobs:
       - name: Upload Zap Report Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: zap-report
+          name: zap-report.xml
           path: zap-report.xml
 
   upload:
@@ -108,7 +108,7 @@ jobs:
       - name: Download Zap Report Artifact
         uses: actions/download-artifact@v3
         with:
-          name: zap-report
+          name: zap-report.xml
           path: zap_report.xml
 
       - name: Upload Reports to Faraday
