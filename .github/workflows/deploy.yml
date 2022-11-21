@@ -151,8 +151,6 @@ jobs:
       uses: snyk/actions/docker@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: localbuild/testimage
 
 #DEPLOY PROD
 
