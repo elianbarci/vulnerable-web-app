@@ -106,7 +106,7 @@ jobs:
       options: --user root -v ${{ github.workspace }}:/reports:rw
     steps:
       - name: Download Zap Report Artifact
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v3
         with:
           name: zap-report
           path: zap_report.xml
