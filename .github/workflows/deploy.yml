@@ -173,7 +173,7 @@ jobs:
 
   deploy-heroku-prod:
     name: Deploy Heroku Prod
-    needs: [upload, zap_scan]
+    needs: [zap-scan-farday]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
