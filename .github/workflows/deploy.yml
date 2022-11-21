@@ -144,6 +144,16 @@ jobs:
           rules_file_name: ".zap/rules.tsv"
           cmd_options: "-a"
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Snyk to check Docker image for vulnerabilities
+      uses: snyk/actions/docker@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: localbuild/testimage
+
 #DEPLOY PROD
 
   deploy-heroku-prod:
