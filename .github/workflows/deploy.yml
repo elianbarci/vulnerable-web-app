@@ -84,14 +84,14 @@ jobs:
 #DAST
 
   zap-scan-faraday:
-    # needs: [deploy-heroku-staging]
+    needs: [deploy-heroku-staging]
     runs-on: ubuntu-latest
     container:
       image: owasp/zap2docker-stable
       options: --user root -v ${{github.workspace}}:/zap/wrk/:rw
     steps:
       - name: Run Zap Baseline Scan
-        run: zap-baseline.py -d -t ${{secrets.MASTER_URL}} -x zap-report.xml
+        run: zap-baseline.py -d -t ${{secrets.STAGING_URL}} -x zap-report.xml
       - name: Upload Zap Report Artifact
         uses: actions/upload-artifact@v3
         with:
