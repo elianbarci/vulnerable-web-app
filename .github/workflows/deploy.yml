@@ -95,7 +95,7 @@ jobs:
       - name: Upload Zap Report Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: zap-report.xml
+          name: zap-report
           path: zap-report.xml
 
   upload:
@@ -108,7 +108,7 @@ jobs:
       - name: Download Zap Report Artifact
         uses: actions/download-artifact@v3
         with:
-          name: zap-report.xml
+          name: zap-report
           path: zap_report.xml
 
       - name: Upload Reports to Faraday
@@ -120,7 +120,7 @@ jobs:
           faraday-cli auth -f ${{ secrets.FARADAY_HOST }} -u ${{secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
           faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
           faraday-cli status
-          faraday-cli tool report ./zap_report.xml
+          faraday-cli tool report zap_report.xml
 
   zap_scan:
     runs-on: ubuntu-latest
