@@ -144,13 +144,18 @@ jobs:
           rules_file_name: ".zap/rules.tsv"
           cmd_options: "-a"
 
-  security:
+  snyk-security:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+    - name: Build the Container image
+      run: docker build . --file Dockerfile --tag localbuild/testimage:latest
     - name: Run Snyk to check Docker image for vulnerabilities
       uses: snyk/actions/docker@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: localbuild/testimage:latest
 
 #DEPLOY PROD
 
