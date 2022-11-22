@@ -108,6 +108,7 @@ jobs:
 
   zap-scan-faraday:
     needs: [deploy-heroku-staging]
+    name: ZAP scan for Faraday
     runs-on: ubuntu-latest
     container:
       image: owasp/zap2docker-stable
