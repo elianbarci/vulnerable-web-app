@@ -3,7 +3,7 @@ name: Deploy Vulnerable Application # workflow name
 on:
   push:
     branches:
-      - master
+      - staging
 
 jobs:
 
@@ -148,9 +148,25 @@ jobs:
 
 #DEPLOY PROD
 
+  merge-master:
+
+      runs-on: ubuntu-latest
+      needs: [zap-scan-faraday, zap_scan, anchore-scan, snyk-security]
+      name: Merge to Master
+
+      steps:
+        - uses: actions/checkout@master
+
+        - name: Merge staging -> master
+          uses: devmasx/merge-branch@master
+          with:
+            type: now
+            target_branch: master
+            github_token: ${{ secrets.TOKEN_GITHUB }}
+
   deploy-heroku-prod:
     name: Deploy Heroku Prod
-    needs: [zap-scan-faraday, zap_scan, anchore-scan, snyk-security]
+    needs: [merge-master]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
