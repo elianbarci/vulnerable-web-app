@@ -149,7 +149,7 @@ jobs:
 
   deploy-heroku-prod:
     name: Deploy Heroku Prod
-    needs: [zap-scan-faraday]
+    needs: [zap-scan-faraday, zap_scan, anchore-scan, snyk-security]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
